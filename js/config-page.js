@@ -126,3 +126,22 @@ document.querySelector("#resetConfig").addEventListener("click", () => {
   document.querySelector("#saveStatus").textContent = "contoh awal dimuat — belum disimpan";
   populateMediaTargets();
 });
+document.querySelector("#openGuide").addEventListener("click", () => document.querySelector("#guideDialog").showModal());
+document.querySelector("#closeGuide").addEventListener("click", () => document.querySelector("#guideDialog").close());
+document.querySelector("#guideDialog").addEventListener("click", (event) => {
+  if (event.target === document.querySelector("#guideDialog")) document.querySelector("#guideDialog").close();
+});
+document.querySelector("#checkConnection").addEventListener("click", async () => {
+  const status = document.querySelector("#connectionStatus");
+  status.textContent = "mengecek...";
+  if (location.protocol === "file:") {
+    status.textContent = "mode lokal: koneksi Vercel belum bisa dicek";
+    return;
+  }
+  try {
+    const response = await fetch("/api/archive", { cache: "no-store" });
+    status.textContent = response.ok ? "database terhubung dan siap dipakai" : `database belum siap (${response.status})`;
+  } catch {
+    status.textContent = "endpoint belum terhubung — cek env Vercel dan redeploy";
+  }
+});

@@ -59,6 +59,116 @@ body:before {
   color: #817895;
   line-height: 1.7;
 }
+.guide-button {
+  float: right;
+  padding: 10px 14px;
+  border: 1px solid #d7cbee;
+  background: #eee8ff;
+  color: #7f62c8;
+  cursor: pointer;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.guide-button span {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: #7f62c8;
+  color: #fff;
+}
+.connection-button {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid #d7cbee;
+  background: #fff;
+  color: #7f62c8;
+  cursor: pointer;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.connection-status {
+  display: block;
+  min-height: 17px;
+  margin-top: 10px;
+  color: #7f62c8;
+  font:
+    10px "DM Mono",
+    monospace;
+}
+.guide-dialog {
+  width: min(620px, calc(100% - 32px));
+  padding: 42px;
+  border: 0;
+  color: #302842;
+  background: #fff;
+  box-shadow: 0 25px 80px rgba(48, 40, 66, 0.25);
+}
+.guide-dialog::backdrop {
+  background: rgba(48, 40, 66, 0.38);
+  backdrop-filter: blur(5px);
+}
+.guide-dialog h2 {
+  margin: 15px 0 30px;
+  font:
+    52px/0.9 Fraunces,
+    serif;
+}
+.guide-dialog em {
+  color: #7f62c8;
+}
+.guide-dialog ol {
+  padding-left: 22px;
+}
+.guide-dialog li {
+  margin: 0 0 22px;
+  padding-left: 7px;
+}
+.guide-dialog strong {
+  display: block;
+  font-size: 15px;
+}
+.guide-dialog li span {
+  display: block;
+  margin-top: 5px;
+  color: #817895;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.guide-dialog code {
+  display: inline-block;
+  margin: 9px 7px 0 0;
+  padding: 6px 8px;
+  background: #eee8ff;
+  color: #7f62c8;
+  font:
+    10px "DM Mono",
+    monospace;
+}
+.guide-note {
+  margin-top: 25px;
+  padding: 18px;
+  background: #fff5cf;
+  color: #81704b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.guide-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  border: 0;
+  background: none;
+  color: #7f62c8;
+  font-size: 28px;
+  cursor: pointer;
+}
 .secret-field {
   display: block;
   max-width: 420px;

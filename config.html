@@ -15,10 +15,12 @@
     <main class="config-shell">
       <a class="back-link" href="index.html">← kembali ke archive</a>
       <header class="config-header">
+        <button class="guide-button" id="openGuide" type="button">panduan setup database <span>?</span></button>
         <p class="eyebrow">private room / edit mode</p>
         <h1>Your little<br /><em>archive.</em></h1>
         <p>Halaman ini sengaja berdiri sendiri. Semua perubahan tersimpan di browser perangkat ini.</p>
         <label class="secret-field">Secret admin key<input id="adminKey" type="password" placeholder="masukkan key Vercel" autocomplete="current-password" /></label>
+        <button class="connection-button" id="checkConnection" type="button">cek koneksi database</button><output id="connectionStatus" class="connection-status"></output>
       </header>
       <form id="configForm">
         <section class="config-section">
@@ -40,6 +42,18 @@
         </div>
       </form>
     </main>
+    <dialog class="guide-dialog" id="guideDialog">
+      <button class="guide-close" id="closeGuide" type="button" aria-label="Tutup panduan">×</button>
+      <p class="eyebrow">setup / step by step</p>
+      <h2>Database tanpa<br /><em>ribet.</em></h2>
+      <ol>
+        <li><strong>Buat database</strong><span>Di Vercel buka project → Storage → Create Database → Upstash Redis.</span></li>
+        <li><strong>Tambahkan 3 variable</strong><span>Masuk ke Settings → Environment Variables. Isi nama variable berikut dan value dari Upstash.</span><code>KV_REST_API_URL</code><code>KV_REST_API_TOKEN</code><code>ARCHIVE_ADMIN_KEY</code></li>
+        <li><strong>Redeploy</strong><span>Setelah klik Save di Vercel, buka Deployments → Redeploy agar setting baru aktif.</span></li>
+        <li><strong>Simpan isi archive</strong><span>Kembali ke halaman ini, masukkan Secret admin key yang sama dengan variable `ARCHIVE_ADMIN_KEY`, lalu klik Simpan semua perubahan.</span></li>
+      </ol>
+      <div class="guide-note"><strong>Fungsi masing-masing:</strong><br />URL = alamat database. Token = kunci aplikasi ke database. Admin key = password untuk mengizinkan halaman config menyimpan data. Jangan pernah membagikan token database.</div>
+    </dialog>
     <script src="js/config.js"></script>
     <script src="js/config-page.js"></script>
   </body>
