@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/config.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-client.js"></script>
   </head>
   <body>
     <main class="config-shell">
@@ -19,7 +22,6 @@
         <p class="eyebrow">private room / edit mode</p>
         <h1>Your little<br /><em>archive.</em></h1>
         <p>Halaman ini sengaja berdiri sendiri. Semua perubahan tersimpan di browser perangkat ini.</p>
-        <label class="secret-field">Secret admin key<input id="adminKey" type="password" placeholder="masukkan key Vercel" autocomplete="current-password" /></label>
       </header>
       <form id="configForm">
         <section class="config-section">
@@ -56,7 +58,6 @@
         <article><strong>Playlist</strong><span>Setiap object berisi judul, penyanyi, dan `src`. `src` bisa URL audio atau hasil upload lagu.</span></article>
         <article><strong>Wishlist</strong><span>Daftar keinginan dengan `title`, `detail`, dan `done`. Checkbox di halaman utama menyimpan statusnya.</span></article>
         <article><strong>Mailbox</strong><span>Form untuk menaruh catatan kamu dan pasangan. Catatan tersimpan bersama archive.</span></article>
-        <article><strong>Secret admin key</strong><span>Kunci akses untuk mengizinkan tombol simpan mengirim perubahan ke server. Nilainya berasal dari environment server, bukan isi archive.</span></article>
       </div>
     </dialog>
     <script src="js/config.js"></script>

@@ -2,31 +2,35 @@
 
 # Little Love Archive
 
+Database sekarang memakai pola yang sama seperti project `Love`: Supabase menyimpan satu object JSON di tabel `love_content`, sedangkan foto dan audio disimpan di bucket Storage `love-media`.
+
+## Setup satu kali
+
+F6mkdhJerudg7AjJ
+
+1. Buka Supabase Dashboard project kamu.
+2. Masuk ke **SQL Editor**.
+3. Jalankan seluruh isi [supabase-setup.sql](supabase-setup.sql).
+4. Pastikan public URL dan publishable/anon key ada di [js/supabase-config.js](js/supabase-config.js).
+5. Deploy ulang ke Vercel.
+6. Buka `/config.html`, edit isi archive, lalu klik **Simpan semua perubahan**.
+
+Tidak perlu lagi mengatur `ARCHIVE_ADMIN_KEY` atau endpoint Redis untuk alur utama ini. Supabase anon/publishable key memang boleh berada di browser; keamanan akses diatur oleh Row Level Security dan policy SQL.
+
+<!-- @format -->
+
+# Little Love Archive
+
 Static scrapbook site with a protected Vercel serverless save endpoint.
 
-## Environment setup
+## Local environment
 
-For local development, copy `.env.local.example` to `.env.local` and fill in the values. `.env.local` is ignored by Git and is only read by the server runtime, never by the public browser page.
+`.env.local.example` tersedia untuk server tooling/local Vercel. Namun website HTML statis tidak dapat membaca `.env.local` langsung dari browser. Untuk halaman statis, gunakan [js/supabase-config.js](js/supabase-config.js) berisi URL project dan publishable/anon key.
 
-For Vercel production, add the same variables in Project Settings → Environment Variables because Vercel does not upload a local `.env.local` file.
+## Media
 
-## Deploy to Vercel
+Gunakan bagian **media room** di `/config.html` untuk upload foto hero, foto momen, dan audio. File akan masuk ke Supabase Storage dan URL publiknya disimpan di object archive.
 
-1. Import this folder into Vercel.
-2. Create an Upstash Redis database and connect it to the Vercel project, or add these environment variables manually:
-   - `KV_REST_API_URL`
-   - `KV_REST_API_TOKEN`
-3. Add a private environment variable:
-   - `ARCHIVE_ADMIN_KEY`
-4. Deploy again after saving the variables.
-5. Open `/config.html`, enter the same value as `ARCHIVE_ADMIN_KEY`, edit the archive, then click **Simpan semua perubahan**.
+## Backup
 
-The public page reads `/api/archive`, so other devices see the same saved archive. The admin key is only sent for `PUT` saves and is never stored in the archive payload.
-
-## Local development
-
-Opening `index.html` directly still works with browser `localStorage`. Remote sync is activated automatically when the site runs on a Vercel URL. Use the config page export/import controls to move a local archive between browsers.
-
-## Media note
-
-Uploaded photos and audio are stored in the archive as data URLs so they can travel through JSON export/import. Keep files reasonably sized because browser storage and Redis have value-size limits; compressed images and short audio files are recommended.
+Export/import JSON tetap tersedia sebagai cadangan manual. Data lintas-device utama berasal dari Supabase.

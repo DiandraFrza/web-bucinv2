@@ -24,6 +24,19 @@ function loadNotes() {
   }
 }
 async function loadRemoteArchive() {
+  if (window.loveSupabase?.getClient()) {
+    try {
+      const remote = await window.loveSupabase.loadContent();
+      if (remote && Object.keys(remote).length) {
+        data = { ...defaults, ...remote };
+        remoteArchive = true;
+        renderAll();
+        return;
+      }
+    } catch {
+      remoteArchive = false;
+    }
+  }
   if (location.protocol === "file:") return;
   try {
     const response = await fetch("/api/archive", { cache: "no-store" });
@@ -40,6 +53,10 @@ async function loadRemoteArchive() {
 }
 async function saveArchive() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  if (window.loveSupabase?.getClient()) {
+    await window.loveSupabase.saveContent(data).catch(() => {});
+    return;
+  }
   if (!remoteArchive || location.protocol === "file:") return;
   await fetch("/api/archive", { method: "PUT", headers: { "Content-Type": "application/json", "x-archive-key": sessionStorage.getItem("archive-admin-key") || "" }, body: JSON.stringify(data) }).catch(() => {});
 }
