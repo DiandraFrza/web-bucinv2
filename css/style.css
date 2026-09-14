@@ -173,11 +173,34 @@
   gap: 17px;
 }
 .shared-note {
+  position: relative;
   min-height: 160px;
   padding: 25px;
   background: var(--pink);
   transform: rotate(-1deg);
   box-shadow: 0 10px 25px rgba(79, 55, 130, 0.08);
+}
+.delete-note {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgba(127, 98, 200, 0.22);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--purple);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.7;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.delete-note:hover {
+  opacity: 1;
+  transform: rotate(8deg) scale(1.08);
 }
 .shared-note:nth-child(even) {
   background: var(--lilac);
@@ -1182,6 +1205,76 @@ a {
     10px "DM Mono",
     monospace;
   text-transform: uppercase;
+}
+.action-dialog {
+  width: min(420px, calc(100% - 32px));
+  padding: 34px;
+  border: 0;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 25px 80px rgba(48, 40, 66, 0.25);
+}
+.action-dialog::backdrop {
+  background: rgba(48, 40, 66, 0.4);
+  backdrop-filter: blur(5px);
+}
+.action-dialog h2 {
+  margin: 12px 0 8px;
+  color: var(--purple);
+  font:
+    34px/1 Fraunces,
+    serif;
+}
+.action-dialog p:not(.kicker) {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.action-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+.action-dialog-buttons button {
+  padding: 11px 15px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--purple);
+  cursor: pointer;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.action-dialog-buttons .action-danger {
+  border-color: #e3aeb5;
+  background: #ae5d67;
+  color: #fff;
+}
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  max-width: min(340px, calc(100% - 48px));
+  padding: 14px 18px;
+  border-left: 4px solid var(--purple);
+  background: var(--ink);
+  color: #fff;
+  box-shadow: var(--shadow);
+  font:
+    11px "DM Mono",
+    monospace;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 .dialog-close {
   position: absolute;

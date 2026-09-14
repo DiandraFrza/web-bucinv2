@@ -6,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Private archive settings</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -21,7 +22,7 @@
         <button class="guide-button" id="openGuide" type="button">panduan isi halaman <span>?</span></button>
         <p class="eyebrow">private room / edit mode</p>
         <h1>Your little<br /><em>archive.</em></h1>
-        <p>Halaman ini sengaja berdiri sendiri. Semua perubahan tersimpan di browser perangkat ini.</p>
+        <p>Setting yang benar ya mbuddd..</p>
       </header>
       <form id="configForm">
         <section class="config-section">
@@ -30,16 +31,25 @@
         </section>
         <section class="config-section">
           <div class="section-label">02 / collections</div>
-          <label>Momen timeline <textarea data-json="moments" rows="13"></textarea></label><label>Open when notes <textarea data-json="notes" rows="13"></textarea></label><label>Playlist <textarea data-json="tracks" rows="10"></textarea></label><label>Wishlist <textarea data-json="wishlist" rows="13"></textarea></label>
+          <div class="collection-editor-heading"><label>Momen timeline</label><button class="add-moment" id="addMoment" type="button">+ tambah card foto</button></div>
+          <div id="momentEditor" class="moment-editor"></div>
+          <div class="collection-editor-heading"><label>Open when notes</label><button class="add-moment" id="addNote" type="button">+ tambah catatan</button></div>
+          <div id="notesEditor" class="simple-editor"></div>
+          <div class="collection-editor-heading"><label>Playlist</label><button class="add-moment" id="addTrack" type="button">+ tambah lagu</button></div>
+          <div id="trackEditor" class="simple-editor"></div>
+          <div class="collection-editor-heading"><label>Wishlist</label><button class="add-moment" id="addWish" type="button">+ tambah rencana</button></div>
+          <div id="wishlistEditor" class="simple-editor"></div>
         </section>
         <section class="config-section media-section">
           <div class="section-label">03 / media room</div>
-          <p class="helper-copy">Upload foto atau lagu di sini. File dimasukkan ke database browser sebagai data URL, jadi bisa ikut export dan dipindahkan lewat JSON.</p>
-          <label>Target media<select id="mediaTarget"></select></label><label>Pilih file<input id="mediaFile" type="file" accept="image/*,audio/*" /></label>
+          <p class="helper-copy">Atur foto utama archive dari sini. Foto momen dan lagu bisa diupload langsung di card masing-masing.</p>
+          <label class="hero-upload"
+            >Foto utama<img id="heroPreview" class="hero-upload-preview" alt="Preview foto utama" /><span class="file-picker"><input id="heroFile" type="file" accept="image/*" /><span class="file-picker-label">pilih foto dari perangkat</span><span class="file-name" id="heroFileName">belum ada foto baru</span><span class="file-picker-hint">Foto ini tampil paling besar di halaman utama</span></span></label
+          >
           <p id="mediaStatus" class="media-status"></p>
         </section>
         <div class="config-actions">
-          <button class="save-config" type="submit">Simpan semua perubahan <span>→</span></button><button class="secondary-config" id="exportConfig" type="button">export database (.json)</button><label class="import-config">import database (.json)<input id="importConfig" type="file" accept="application/json,.json" /></label><button class="reset-config" id="resetConfig" type="button">reset contoh awal</button><output id="saveStatus" role="status"></output>
+          <button class="save-config" type="submit">Simpan semua perubahan <span>→</span></button><button class="secondary-config" id="exportConfig" type="button">download backup</button><label class="import-config">pulihkan backup<input id="importConfig" type="file" accept="application/json,.json" /></label><button class="reset-config" id="resetConfig" type="button">reset contoh awal</button><output id="saveStatus" role="status"></output>
         </div>
       </form>
     </main>
@@ -50,16 +60,29 @@
       <div class="guide-glossary">
         <article><strong>Judul utama</strong><span>Judul paling besar di hero, bagian pertama yang terlihat.</span></article>
         <article>
-          <strong>Label dan judul section</strong><span>Teks kecil dan heading untuk timeline, notes, playlist, wishlist, serta mailbox. Kamu boleh memakai HTML seperti <code>&lt;br&gt;&lt;em&gt;teks miring&lt;/em&gt;</code>.</span>
+          <strong>Label dan judul section</strong><span>Teks kecil dan heading untuk timeline, notes, playlist, wishlist, serta mailbox. Format yang tersedia hanya dua: <code>&lt;br&gt;</code> untuk pindah baris dan <code>&lt;em&gt;teks&lt;/em&gt;</code> untuk teks miring.</span>
         </article>
-        <article><strong>Hero image</strong><span>Foto besar di halaman paling atas. Gunakan URL gambar atau upload lewat Media room.</span></article>
-        <article><strong>Momen timeline</strong><span>Setiap object berisi `date`, `title`, `text`, dan `image`. `image` adalah URL atau hasil upload foto.</span></article>
-        <article><strong>Open when notes</strong><span>Kartu yang bisa diklik di halaman utama. Pesan rahasianya muncul dalam modal, jadi teks `text` tidak tampil sebelum dibuka.</span></article>
-        <article><strong>Playlist</strong><span>Setiap object berisi judul, penyanyi, dan `src`. `src` bisa URL audio atau hasil upload lagu.</span></article>
-        <article><strong>Wishlist</strong><span>Daftar keinginan dengan `title`, `detail`, dan `done`. Checkbox di halaman utama menyimpan statusnya.</span></article>
+        <article>
+          <strong>Warna kartu notes</strong><span>Pilih <code>lilac</code> untuk ungu muda, <code>yellow</code> untuk kuning lembut, atau <code>pink</code> untuk merah muda. Pilihan warna ini aman dan langsung diterapkan ke kartu.</span>
+        </article>
+        <article><strong>Hero image</strong><span>Foto besar di halaman paling atas. Upload lewat bagian Media room; file hanya dipakai sebagai gambar atau lagu sesuai jenis inputnya.</span></article>
+        <article><strong>Momen timeline</strong><span>Tambah card baru, isi tanggal, judul, cerita, lalu upload foto langsung pada card tersebut. Card bisa dihapus kapan saja.</span></article>
+        <article><strong>Open when notes</strong><span>Tambah catatan, pilih warnanya, lalu isi pesan rahasia. Kartu bisa dibuka di halaman utama dan dihapus dari editor.</span></article>
+        <article><strong>Playlist</strong><span>Tambah judul lagu dan penyanyi, lalu upload file audio langsung pada card playlist.</span></article>
+        <article><strong>Wishlist</strong><span>Tambah rencana, isi keterangannya, lalu tandai sudah dilakukan jika selesai. Item juga bisa dihapus.</span></article>
         <article><strong>Mailbox</strong><span>Form untuk menaruh catatan kamu dan pasangan. Catatan tersimpan bersama archive.</span></article>
+        <article>
+          <strong>Keamanan</strong><span>Isi teks di halaman utama ditampilkan sebagai teks biasa. Hanya <code>&lt;br&gt;</code> dan <code>&lt;em&gt;</code> yang diproses; tag, atribut, dan script lain otomatis dinonaktifkan.</span>
+        </article>
       </div>
     </dialog>
+    <dialog class="action-dialog" id="actionDialog">
+      <p class="eyebrow">please confirm</p>
+      <h2 id="actionTitle">Hapus item?</h2>
+      <p id="actionMessage">Item ini akan dihapus dari archive.</p>
+      <div class="action-dialog-buttons"><button id="actionCancel" type="button">batal</button><button class="action-danger" id="actionConfirm" type="button">hapus</button></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="js/config.js"></script>
     <script src="js/config-page.js"></script>
   </body>

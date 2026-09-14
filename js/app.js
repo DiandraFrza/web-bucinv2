@@ -5,8 +5,12 @@ const NOTES_KEY = "little-love-notes";
 const defaults = window.LOVE_ARCHIVE_DEFAULTS;
 let data = loadData();
 let remoteArchive = false;
+let actionResolver = null;
+let toastTimer = null;
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
+const safeMediaUrl = (value) => (/^(https?:\/\/|data:(image|audio)\/)/i.test(String(value || "")) ? String(value) : "");
 
 function loadData() {
   try {
@@ -51,29 +55,74 @@ async function loadRemoteArchive() {
     remoteArchive = false;
   }
 }
-async function saveArchive() {
+function showToast(message) {
+  const toast = $("#toast");
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2800);
+}
+function finishAction(confirmed) {
+  const resolver = actionResolver;
+  actionResolver = null;
+  $("#actionDialog").close();
+  resolver?.(confirmed);
+}
+function askConfirmation(title, message) {
+  $("#actionTitle").textContent = title;
+  $("#actionMessage").textContent = message;
+  $("#actionDialog").showModal();
+  return new Promise((resolve) => {
+    actionResolver = resolve;
+  });
+}
+$("#actionConfirm").addEventListener("click", () => finishAction(true));
+$("#actionCancel").addEventListener("click", () => finishAction(false));
+$("#actionDialog").addEventListener("cancel", (event) => {
+  event.preventDefault();
+  finishAction(false);
+});
+async function saveArchive(message = "") {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   if (window.loveSupabase?.getClient()) {
     await window.loveSupabase.saveContent(data).catch(() => {});
-    return;
+  } else if (remoteArchive && location.protocol !== "file:") {
+    await fetch("/api/archive", { method: "PUT", headers: { "Content-Type": "application/json", "x-archive-key": sessionStorage.getItem("archive-admin-key") || "" }, body: JSON.stringify(data) }).catch(() => {});
   }
-  if (!remoteArchive || location.protocol === "file:") return;
-  await fetch("/api/archive", { method: "PUT", headers: { "Content-Type": "application/json", "x-archive-key": sessionStorage.getItem("archive-admin-key") || "" }, body: JSON.stringify(data) }).catch(() => {});
+  if (message) showToast(message);
 }
 function setText(key, value) {
-  $$(`[data-config="${key}"]`).forEach((node) => (node.innerHTML = value));
+  $$(`[data-config="${key}"]`).forEach((node) => {
+    const template = document.createElement("template");
+    template.innerHTML = String(value ?? "");
+    const appendAllowed = (parent, source) => {
+      source.childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) parent.appendChild(document.createTextNode(child.nodeValue));
+        else if (child.nodeType === Node.ELEMENT_NODE && child.tagName === "BR") parent.appendChild(document.createElement("br"));
+        else if (child.nodeType === Node.ELEMENT_NODE && child.tagName === "EM") {
+          const emphasis = document.createElement("em");
+          appendAllowed(emphasis, child);
+          parent.appendChild(emphasis);
+        } else if (child.textContent) parent.appendChild(document.createTextNode(child.textContent));
+      });
+    };
+    node.replaceChildren();
+    appendAllowed(node, template.content);
+  });
 }
 function renderBase() {
   Object.keys(data).forEach((key) => {
     if (typeof data[key] === "string") setText(key, data[key]);
   });
-  $('[data-image="hero"]').src = data.heroImage;
+  $('[data-image="hero"]').src = safeMediaUrl(data.heroImage);
 }
 function renderMoments() {
-  $("#timeline").innerHTML = data.moments.map((item, index) => `<article class="moment-card reveal" style="transition-delay:${index * 100}ms"><div class="moment-image"><img src="${item.image}" alt="${item.title}" loading="lazy"></div><span class="moment-date">${item.date}</span><h3>${item.title}</h3><p>${item.text}</p></article>`).join("");
+  const moments = Array.isArray(data.moments) ? data.moments : [];
+  $("#timeline").innerHTML = moments.length ? moments.map((item, index) => `<article class="moment-card reveal" style="transition-delay:${index * 100}ms"><div class="moment-image"><img src="${escapeHtml(safeMediaUrl(item.image))}" alt="${escapeHtml(item.title)}" loading="lazy"></div><span class="moment-date">${escapeHtml(item.date)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`).join("") : `<p class="empty-moments">Belum ada foto momen. Tambahkan card baru dari halaman config.</p>`;
 }
 function renderNotes() {
-  $("#notesGrid").innerHTML = data.notes.map((note, index) => `<button class="note-card ${note.color} reveal" style="transition-delay:${index * 100}ms" data-note-index="${index}" type="button"><small>${note.label}</small><h3>${note.title}</h3><span class="note-hint">tap to open</span><span class="note-fold" aria-hidden="true"></span></button>`).join("");
+  const allowedColors = ["lilac", "yellow", "pink"];
+  $("#notesGrid").innerHTML = data.notes.map((note, index) => `<button class="note-card ${allowedColors.includes(note.color) ? note.color : "lilac"} reveal" style="transition-delay:${index * 100}ms" data-note-index="${index}" type="button"><small>${escapeHtml(note.label)}</small><h3>${escapeHtml(note.title)}</h3><span class="note-hint">tap to open</span><span class="note-fold" aria-hidden="true"></span></button>`).join("");
   $$("[data-note-index]").forEach((card) =>
     card.addEventListener("click", () => {
       const note = data.notes[card.dataset.noteIndex];
@@ -85,30 +134,42 @@ function renderNotes() {
   );
 }
 function renderWishlist() {
-  $("#wishlistGrid").innerHTML = data.wishlist.map((item, index) => `<label class="wish-card ${item.done ? "is-done" : ""} reveal" style="transition-delay:${index * 80}ms"><input type="checkbox" data-wish-index="${index}" ${item.done ? "checked" : ""}><span class="wish-check"></span><span><strong>${item.title}</strong><small>${item.detail}</small></span><b>0${index + 1}</b></label>`).join("");
+  $("#wishlistGrid").innerHTML = data.wishlist.map((item, index) => `<label class="wish-card ${item.done ? "is-done" : ""} reveal" style="transition-delay:${index * 80}ms"><input type="checkbox" data-wish-index="${index}" ${item.done ? "checked" : ""}><span class="wish-check"></span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.detail)}</small></span><b>0${index + 1}</b></label>`).join("");
   $$("[data-wish-index]").forEach((input) =>
     input.addEventListener("change", (event) => {
       data.wishlist[event.target.dataset.wishIndex].done = event.target.checked;
       event.target.closest(".wish-card").classList.toggle("is-done", event.target.checked);
-      saveArchive();
+      saveArchive("Wishlist tersimpan");
     }),
   );
 }
 function renderTracks() {
-  $("#tracks").innerHTML = data.tracks.map((track, index) => `<div class="track" data-src="${track.src}"><span class="track-number">0${index + 1}</span><button type="button" aria-label="Putar ${track.title}">▶</button><div><span class="track-name">${track.title}</span><span class="track-artist">${track.artist}</span></div></div>`).join("");
+  $("#tracks").innerHTML = data.tracks.map((track, index) => `<div class="track" data-src="${escapeHtml(safeMediaUrl(track.src))}"><span class="track-number">0${index + 1}</span><button type="button" aria-label="Putar ${escapeHtml(track.title)}">▶</button><div><span class="track-name">${escapeHtml(track.title)}</span><span class="track-artist">${escapeHtml(track.artist)}</span></div></div>`).join("");
 }
 function renderSharedNotes() {
   const notes = loadNotes();
-  $("#sharedNotesGrid").innerHTML = notes.length ? notes.map((note) => `<article class="shared-note"><small>${note.author}</small><p>${note.message}</p><time>${note.date}</time></article>`).join("") : `<p class="empty-notes">Belum ada catatan. Tinggalkan satu untuk membuka halaman pertama.</p>`;
+  $("#sharedNotesGrid").innerHTML = notes.length ? notes.map((note, index) => `<article class="shared-note"><button class="delete-note" type="button" data-shared-note-index="${index}" aria-label="Hapus catatan">×</button><small>${escapeHtml(note.author)}</small><p>${escapeHtml(note.message)}</p><time>${escapeHtml(note.date)}</time></article>`).join("") : `<p class="empty-notes">Belum ada catatan. Tinggalkan satu untuk membuka halaman pertama.</p>`;
 }
 function initNoteForm() {
+  $("#sharedNotesGrid").addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-shared-note-index]");
+    if (!button) return;
+    const confirmed = await askConfirmation("Hapus catatan?", "Catatan kecil ini akan dihapus dari archive.");
+    if (!confirmed) return;
+    const notes = loadNotes();
+    notes.splice(Number(button.dataset.sharedNoteIndex), 1);
+    data.sharedNotes = notes;
+    localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    await saveArchive("Catatan dihapus");
+    renderSharedNotes();
+  });
   $("#noteForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const notes = loadNotes();
     notes.unshift({ author: $("#noteAuthor").value, message: $("#noteMessage").value, date: new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) });
     data.sharedNotes = notes.slice(0, 12);
     localStorage.setItem(NOTES_KEY, JSON.stringify(data.sharedNotes));
-    saveArchive();
+    saveArchive("Catatan tersimpan");
     event.target.reset();
     renderSharedNotes();
   });
