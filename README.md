@@ -4,6 +4,12 @@
 
 Static scrapbook site with a protected Vercel serverless save endpoint.
 
+## Environment setup
+
+For local development, copy `.env.local.example` to `.env.local` and fill in the values. `.env.local` is ignored by Git and is only read by the server runtime, never by the public browser page.
+
+For Vercel production, add the same variables in Project Settings → Environment Variables because Vercel does not upload a local `.env.local` file.
+
 ## Deploy to Vercel
 
 1. Import this folder into Vercel.

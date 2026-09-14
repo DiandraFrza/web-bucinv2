@@ -159,6 +159,33 @@ body:before {
   font-size: 12px;
   line-height: 1.6;
 }
+.guide-glossary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.guide-glossary article {
+  padding: 16px;
+  background: #f8f5ff;
+}
+.guide-glossary strong {
+  display: block;
+  color: #302842;
+  font-size: 13px;
+}
+.guide-glossary span {
+  display: block;
+  margin-top: 7px;
+  color: #817895;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.guide-glossary code {
+  color: #7f62c8;
+  font:
+    11px "DM Mono",
+    monospace;
+}
 .guide-close {
   position: absolute;
   top: 15px;
@@ -272,6 +299,16 @@ textarea[data-json] {
   }
   .field-grid {
     grid-template-columns: 1fr;
+  }
+  .guide-button {
+    float: none;
+    margin-bottom: 28px;
+  }
+  .guide-glossary {
+    grid-template-columns: 1fr;
+  }
+  .guide-dialog {
+    padding: 35px 22px;
   }
 }
 .helper-copy {
