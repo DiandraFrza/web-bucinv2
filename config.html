@@ -1,0 +1,46 @@
+<!-- @format -->
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private archive settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/config.css" />
+  </head>
+  <body>
+    <main class="config-shell">
+      <a class="back-link" href="index.html">← kembali ke archive</a>
+      <header class="config-header">
+        <p class="eyebrow">private room / edit mode</p>
+        <h1>Your little<br /><em>archive.</em></h1>
+        <p>Halaman ini sengaja berdiri sendiri. Semua perubahan tersimpan di browser perangkat ini.</p>
+        <label class="secret-field">Secret admin key<input id="adminKey" type="password" placeholder="masukkan key Vercel" autocomplete="current-password" /></label>
+      </header>
+      <form id="configForm">
+        <section class="config-section">
+          <div class="section-label">01 / visible copy</div>
+          <div class="field-grid" id="textFields"></div>
+        </section>
+        <section class="config-section">
+          <div class="section-label">02 / collections</div>
+          <label>Momen timeline <textarea data-json="moments" rows="13"></textarea></label><label>Open when notes <textarea data-json="notes" rows="13"></textarea></label><label>Playlist <textarea data-json="tracks" rows="10"></textarea></label><label>Wishlist <textarea data-json="wishlist" rows="13"></textarea></label>
+        </section>
+        <section class="config-section media-section">
+          <div class="section-label">03 / media room</div>
+          <p class="helper-copy">Upload foto atau lagu di sini. File dimasukkan ke database browser sebagai data URL, jadi bisa ikut export dan dipindahkan lewat JSON.</p>
+          <label>Target media<select id="mediaTarget"></select></label><label>Pilih file<input id="mediaFile" type="file" accept="image/*,audio/*" /></label>
+          <p id="mediaStatus" class="media-status"></p>
+        </section>
+        <div class="config-actions">
+          <button class="save-config" type="submit">Simpan semua perubahan <span>→</span></button><button class="secondary-config" id="exportConfig" type="button">export database (.json)</button><label class="import-config">import database (.json)<input id="importConfig" type="file" accept="application/json,.json" /></label><button class="reset-config" id="resetConfig" type="button">reset contoh awal</button><output id="saveStatus" role="status"></output>
+        </div>
+      </form>
+    </main>
+    <script src="js/config.js"></script>
+    <script src="js/config-page.js"></script>
+  </body>
+</html>

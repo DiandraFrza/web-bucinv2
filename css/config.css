@@ -1,0 +1,212 @@
+/** @format */
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f8f5ff;
+  color: #302842;
+  font-family: Nunito, sans-serif;
+}
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  background-image: radial-gradient(#cfc5e7 0.7px, transparent 0.7px);
+  background-size: 17px 17px;
+}
+.config-shell {
+  width: min(980px, 100%);
+  margin: auto;
+  padding: 42px 28px 90px;
+  position: relative;
+}
+.back-link {
+  color: #7f62c8;
+  font:
+    11px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.config-header {
+  padding: 70px 0 55px;
+  border-bottom: 1px solid #e8e1f5;
+}
+.eyebrow,
+.section-label {
+  color: #7f62c8;
+  font:
+    11px "DM Mono",
+    monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.config-header h1 {
+  font:
+    clamp(4rem, 9vw, 8rem)/0.88 Fraunces,
+    serif;
+  margin: 18px 0;
+}
+.config-header em {
+  color: #7f62c8;
+}
+.config-header p:last-child {
+  max-width: 420px;
+  color: #817895;
+  line-height: 1.7;
+}
+.secret-field {
+  display: block;
+  max-width: 420px;
+  margin-top: 25px;
+  color: #817895;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.secret-field input {
+  margin-top: 8px;
+}
+.config-section {
+  padding: 55px 0;
+  border-bottom: 1px solid #e8e1f5;
+}
+.section-label {
+  margin-bottom: 28px;
+}
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 28px;
+}
+label {
+  display: block;
+  color: #817895;
+  font:
+    10px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+input,
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px;
+  border: 1px solid #e8e1f5;
+  background: #fff;
+  color: #302842;
+  font:
+    13px Nunito,
+    sans-serif;
+  resize: vertical;
+}
+textarea[data-json] {
+  font:
+    12px/1.6 "DM Mono",
+    monospace;
+  min-height: 140px;
+  margin-bottom: 25px;
+}
+.config-actions {
+  padding-top: 35px;
+}
+.save-config {
+  width: 100%;
+  padding: 17px 20px;
+  border: 0;
+  background: #7f62c8;
+  color: #fff;
+  cursor: pointer;
+  font:
+    11px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.save-config span {
+  float: right;
+  font-size: 18px;
+}
+.reset-config {
+  display: block;
+  margin: 20px auto;
+  border: 0;
+  background: none;
+  color: #817895;
+  text-decoration: underline;
+  cursor: pointer;
+  font:
+    11px "DM Mono",
+    monospace;
+}
+.config-actions output {
+  display: block;
+  color: #7f62c8;
+  font:
+    11px "DM Mono",
+    monospace;
+  text-align: center;
+}
+@media (max-width: 680px) {
+  .config-shell {
+    padding: 25px 20px 60px;
+  }
+  .config-header {
+    padding: 55px 0 40px;
+  }
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.helper-copy {
+  max-width: 620px;
+  margin: -10px 0 28px;
+  color: #817895;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.media-section select {
+  display: block;
+  width: 100%;
+  margin: 8px 0 22px;
+  padding: 13px;
+  border: 1px solid #e8e1f5;
+  background: #fff;
+  color: #302842;
+  font:
+    13px Nunito,
+    sans-serif;
+}
+.media-status {
+  min-height: 18px;
+  margin-top: 12px;
+  color: #7f62c8;
+  font:
+    11px "DM Mono",
+    monospace;
+}
+.secondary-config,
+.import-config {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 20px;
+  border: 1px solid #d7cbee;
+  background: #eee8ff;
+  color: #7f62c8;
+  text-align: center;
+  cursor: pointer;
+  font:
+    11px "DM Mono",
+    monospace;
+  text-transform: uppercase;
+}
+.import-config input {
+  display: none;
+}
